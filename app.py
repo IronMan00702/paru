@@ -1,7 +1,7 @@
 import os
 from flask_cors import CORS
-from flask import Flask, render_template, request, jsonify
-from ingestion.ingest import (load_single_document,load_document_batch,load_documents,split_documents)
+from flask import Flask, render_template, request, jsonify,send_from_directory
+from input.ingest import (load_single_document,load_document_batch,load_documents,split_documents)
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter, Language
@@ -14,12 +14,12 @@ from constants import (
     PERSIST_DIRECTORY,
     SOURCE_DIRECTORY,
 )
-
+from waitress import serve
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'SOURCE_DOCUMENTS'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'md','ppt','pptx'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'md'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app, support_credentials=True)
@@ -63,8 +63,9 @@ def ask_question():
     
     if not question:
         return jsonify({"error": "Question not provided"}), 400
+    documents = load_documents(SOURCE_DIRECTORY)
     
-     documents = load_documents(SOURCE_DIRECTORY)
+    # Create OpenAIEmbeddings and Chroma
     text_documents, python_documents = split_documents(documents)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     python_splitter = RecursiveCharacterTextSplitter.from_language(
@@ -74,11 +75,16 @@ def ask_question():
     texts.extend(python_splitter.split_documents(python_documents))
     embedding=get_openAi_embeddings()
     vectordb = Chroma.from_documents(texts, embedding)
+    # Sample text data for embedding (you need to modify this)
+    
+   
+    #print(vectordb,texts)
     # Get the result from analyze_and_answer
     result = analyze_and_answer(question, vectordb)
-    print("hii")
+    print(result)
     return jsonify(result)
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.2', port=5000)
-    
+    # app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
+    serve(app, host='127.0.0.1', port=5000)
