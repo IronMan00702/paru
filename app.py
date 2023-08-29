@@ -64,26 +64,7 @@ def ask_question():
     if not question:
         return jsonify({"error": "Question not provided"}), 400
     
-    # documents = load_documents(SOURCE_DIRECTORY)
-    # text_documents, python_documents = split_documents(documents)
-    # text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    # python_splitter = RecursiveCharacterTextSplitter.from_language(
-    #     language=Language.PYTHON, chunk_size=1000, chunk_overlap=200
-    # )
-    # texts = text_splitter.split_documents(text_documents)
-    # texts.extend(python_splitter.split_documents(python_documents))
-    # embedding=get_openAi_embeddings()
-    # vectordb = Chroma.from_documents(texts, embedding)
-    # Sample text data for embedding (you need to modify this)
-   
-    # Get the result from analyze_and_answer
-    result = analyze_and_answer(question, vectordb)
-    print(result)
-    
-    return jsonify(result)
-
-if __name__ == '__main__':
-    documents = load_documents(SOURCE_DIRECTORY)
+     documents = load_documents(SOURCE_DIRECTORY)
     text_documents, python_documents = split_documents(documents)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     python_splitter = RecursiveCharacterTextSplitter.from_language(
@@ -93,7 +74,11 @@ if __name__ == '__main__':
     texts.extend(python_splitter.split_documents(python_documents))
     embedding=get_openAi_embeddings()
     vectordb = Chroma.from_documents(texts, embedding)
-    print(vectordb)
+    # Get the result from analyze_and_answer
+    result = analyze_and_answer(question, vectordb)
+    print("hii")
+    return jsonify(result)
 
+if __name__ == '__main__':
     app.run(host='127.0.0.2', port=5000)
     
