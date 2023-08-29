@@ -8,7 +8,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 # os.environ["OPENAI_API_VERSION"] = "2020-11-07"
 # # os.environ["OPENAI_API_BASE"] = "https://azureopenaidcs.openai.azure.com/"
 # # os.environ["OPENAI_API_KEY"] = "5477144f13094f1b89e76edf66786958"
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI,AzureOpenAI
