@@ -30,7 +30,13 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return "hello_world"
+   print('Request for index page received')
+   return render_template('index.html')
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
